@@ -9,8 +9,10 @@ public interface UserService extends UserDetailsService {
 
     List<User> getUsersList();
     User getUser(Long id);
-    void addUser(User user);
+    void addUser(User user, String[] selectResult);
+
+    void addCurrentUser(User user);
     void deleteUser(Long id);
-    void editUser(User user);
+    void editUser(User user, String [] selectResult);
     User findByUsername(String username);
 }

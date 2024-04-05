@@ -1,6 +1,5 @@
 package com.perevozchikov.Preproject314.controller;
 
-import com.perevozchikov.Preproject314.model.Role;
 import com.perevozchikov.Preproject314.model.User;
 import com.perevozchikov.Preproject314.service.RoleService;
 import com.perevozchikov.Preproject314.service.UserService;
@@ -10,9 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/admin/users")
@@ -41,23 +37,13 @@ public class AdminController {
 
     @PostMapping("/edit")
     public String editUser(@ModelAttribute("user") User user, @RequestParam("checkRoles") String[] selectResult) {
-        Set<Role> roles = new HashSet<>();
-        for (String s : selectResult) {
-            roles.add(roleService.getRoleForName("ROLE_" + s));
-            user.setRoles(roles);
-        }
-        userService.editUser(user);
+        userService.editUser(user, selectResult);
         return "redirect:/admin/users";
     }
 
     @PostMapping("/add")
     public String addUser(@ModelAttribute("User") User user, @RequestParam("checkRoles") String[] selectResult) {
-        Set<Role> roles = new HashSet<>();
-        for (String s : selectResult) {
-            roles.add(roleService.getRoleForName("ROLE_" + s));
-            user.setRoles(roles);
-        }
-        userService.addUser(user);
+        userService.addUser(user, selectResult);
         return "redirect:/admin/users";
     }
 

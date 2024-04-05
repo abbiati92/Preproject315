@@ -15,10 +15,7 @@ public class Role implements GrantedAuthority {
     private Long id;
     @Column(name = "role")
     private String role;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "roles_id"),
-            inverseJoinColumns = @JoinColumn(name = "users_id"))
+    @ManyToMany(mappedBy = "roles")
     private List<User> users;
 
     public Role(String role) {
@@ -26,6 +23,9 @@ public class Role implements GrantedAuthority {
     }
 
     public Role() {
+    }
+
+    public Role(int i, String role_admin) {
     }
 
     public Long getId() {

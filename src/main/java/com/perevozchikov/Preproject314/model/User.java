@@ -34,7 +34,7 @@ public class User implements UserDetails {
     private String userPassword;
 
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "users_id" ,nullable = false, updatable = false),
             inverseJoinColumns = @JoinColumn(name = "roles_id",nullable = false, updatable = false))
