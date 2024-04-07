@@ -39,7 +39,7 @@ public class Init {
 
         User admin = new User();
         admin.setFirstName("admin");
-        admin.setLastName("adminov")
+        admin.setLastName("adminov");
         admin.setEmail("admin@mail.ru");
         admin.setUserPassword("admin");
         admin.setRoles(adminRoles);
