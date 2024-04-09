@@ -11,7 +11,7 @@
 	<groupId>com.perevozchikov</groupId>
 	<artifactId>Preproject314</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Preproject314</name>
+	<name>Pre project314</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
@@ -68,7 +68,7 @@
 				<configuration>
 					<excludes>
 						<exclude>
-							<groupId>org.projectlombok</groupId>
+							<groupId>org.project-lombok</groupId>
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
