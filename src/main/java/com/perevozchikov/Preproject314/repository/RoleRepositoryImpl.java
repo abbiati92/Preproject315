@@ -2,10 +2,12 @@ package com.perevozchikov.Preproject314.repository;
 
 import com.perevozchikov.Preproject314.model.Role;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class RoleRepositoryImpl implements RoleRepository {
@@ -16,25 +18,17 @@ public class RoleRepositoryImpl implements RoleRepository {
         this.entityManager = entityManager;
     }
 
-
-    @Override
-    public List<Role> getAllRoles() {
-        return entityManager.createQuery("select r from Role r", Role.class).getResultList();
+    public Set<Role> getRoles() {
+        return entityManager.createQuery("from Role ", Role.class).getResultStream().collect(Collectors.toSet());
     }
 
-    @Override
-    public Role getRoleForName(String name) {
-        return entityManager.createQuery("select r from Role r where r.role =: role", Role.class)
-                .setParameter("role", name).getSingleResult();
-    }
-
-    @Override
-    public Role getRoleById(Long id) {
-        return entityManager.find(Role.class, id);
-    }
-
-    @Override
+    @Transactional
     public void addRole(Role role) {
         entityManager.persist(role);
+    }
+
+    @Override
+    public Role findById(Integer id) {
+        return entityManager.find(Role.class, id);
     }
 }

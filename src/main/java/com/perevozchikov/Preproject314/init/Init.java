@@ -2,55 +2,59 @@ package com.perevozchikov.Preproject314.init;
 
 import com.perevozchikov.Preproject314.model.Role;
 import com.perevozchikov.Preproject314.model.User;
-import com.perevozchikov.Preproject314.service.RoleService;
+import com.perevozchikov.Preproject314.service.RoleServiceImp;
 import com.perevozchikov.Preproject314.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Component
-public class Init {
+public class Init implements ApplicationListener<ContextRefreshedEvent> {
 
+    private final RoleServiceImp roleService;
     private final UserService userService;
-    private final RoleService roleService;
 
     @Autowired
-    public Init(UserService userService, RoleService roleService) {
-        this.userService = userService;
+    public Init(RoleServiceImp roleService, UserService userService) {
         this.roleService = roleService;
+        this.userService = userService;
     }
 
-    @PostConstruct
-    public void init() {
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
         Role userRole = new Role();
-        userRole.setRole("ROLE_USER");
+        userRole.setName("ROLE_USER");
         roleService.addRole(userRole);
 
         Role adminRole = new Role();
-        adminRole.setRole("ROLE_ADMIN");
+        adminRole.setName("ROLE_ADMIN");
         roleService.addRole(adminRole);
 
         Set<Role> userRoles = new HashSet<>(List.of(userRole));
         Set<Role> adminRoles = new HashSet<>(List.of(adminRole));
 
         User admin = new User();
-        admin.setFirstName("admin");
-        admin.setLastName("adminov");
+        admin.setName("admin");
+        admin.setLastname("Vasiliev");
+        admin.setAge(30);
         admin.setEmail("admin@mail.ru");
-        admin.setUserPassword("admin");
+        admin.setPassword("admin");
         admin.setRoles(adminRoles);
-        userService.addCurrentUser(admin);
+        userService.addUser(admin);
 
         User user = new User();
-        user.setFirstName("user");
-        user.setLastName("userov");
+        user.setName("user");
+        user.setLastname("user2");
+        user.setAge(18);
         user.setEmail("user@mail.ru");
-        user.setUserPassword("user");
+        user.setPassword("user");
         user.setRoles(userRoles);
-        userService.addCurrentUser(user);
+        userService.addUser(user);
     }
 }

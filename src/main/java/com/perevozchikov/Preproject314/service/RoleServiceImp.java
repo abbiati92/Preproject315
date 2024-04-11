@@ -1,40 +1,37 @@
 package com.perevozchikov.Preproject314.service;
 
+
 import com.perevozchikov.Preproject314.model.Role;
 import com.perevozchikov.Preproject314.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Set;
 
 @Service
-@Transactional
-public class RoleServiceImpl implements RoleService {
-
+@Transactional(readOnly = true)
+public class RoleServiceImp implements RoleService {
     private final RoleRepository roleRepository;
 
     @Autowired
-    public RoleServiceImpl(RoleRepository roleRepository) {
+    public RoleServiceImp(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
 
     @Override
-    public List<Role> getAllRoles() {
-        return roleRepository.getAllRoles();
+    public Set<Role> getRoles() {
+        return roleRepository.getRoles();
     }
 
     @Override
-    public Role getRoleForName(String name) {
-        return roleRepository.getRoleForName(name);
-    }
-
-    @Override
-    public Role getRoleById(Long id) {
-        return roleRepository.getRoleById(id);
+    public Role findById(Integer id) {
+        return roleRepository.findById(id);
     }
 
     @Override
     @Transactional
-    public void addRole(Role role) { roleRepository.addRole(role); }
+    public void addRole(Role role) {
+        roleRepository.addRole(role);
+    }
 }

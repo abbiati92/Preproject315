@@ -1,49 +1,53 @@
 package com.perevozchikov.Preproject314.config;
 
-import com.perevozchikov.Preproject314.service.UserService;
+import com.perevozchikov.Preproject314.security.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+@Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final LoginSuccessHandler loginSuccessHandler;
-    private final UserService userService;
+    private final CustomUserDetailsService userService;
+    private final SuccessUserHandler successUserHandler;
 
     @Autowired
-    public SecurityConfig(UserService userService, LoginSuccessHandler loginSuccessHandler) {
+    public WebSecurityConfig(CustomUserDetailsService userService, SuccessUserHandler successUserHandler) {
         this.userService = userService;
-        this.loginSuccessHandler = loginSuccessHandler;
+        this.successUserHandler = successUserHandler;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/user").hasAnyRole("USER","ADMIN")
+                .antMatchers("/", "/index").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/user").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().successHandler(loginSuccessHandler)
+                .formLogin().successHandler(successUserHandler)
+                .loginPage("/")
+                .loginProcessingUrl("/process_login")
+                .usernameParameter("email")
+                .passwordParameter("password")
                 .permitAll()
                 .and()
-                .logout((logout) -> logout
-                        .logoutUrl("/logout")
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
-                        .logoutSuccessUrl("/login")
-                        .permitAll());
+                .logout()
+                .permitAll();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return NoOpPasswordEncoder.getInstance();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

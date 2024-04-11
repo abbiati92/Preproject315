@@ -1,15 +1,17 @@
 package com.perevozchikov.Preproject314.repository;
 
 import com.perevozchikov.Preproject314.model.User;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Set;
 
+@Repository
 public interface UserRepository {
 
-    List<User> getUsersList();
-    User getUser(Long id);
+    User findByUserEmail(String email);
+    Set<User> getUsers();
+    User getUser(Integer id);
+    void removeUser(Integer id);
     void addUser(User user);
-    void deleteUser(Long id);
-    void editUser(User user);
-    User findByUsername(String username);
+    void updateUser(User user);
 }

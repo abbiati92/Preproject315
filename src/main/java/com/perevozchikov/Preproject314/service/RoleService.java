@@ -2,13 +2,9 @@ package com.perevozchikov.Preproject314.service;
 
 import com.perevozchikov.Preproject314.model.Role;
 
-import java.util.List;
-
+import java.util.Set;
 public interface RoleService {
-
-    List<Role> getAllRoles();
-    Role getRoleForName(String name);
-    Role getRoleById(Long id);
-
+    Set<Role> getRoles();
+    Role findById(Integer id);
     void addRole(Role role);
 }

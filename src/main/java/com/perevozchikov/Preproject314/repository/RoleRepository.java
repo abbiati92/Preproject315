@@ -1,13 +1,18 @@
 package com.perevozchikov.Preproject314.repository;
 
 import com.perevozchikov.Preproject314.model.Role;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Set;
 
+
+@Repository
 public interface RoleRepository {
+    Set<Role> getRoles();
 
-    List<Role> getAllRoles();
-    Role getRoleForName(String name);
-    Role getRoleById(Long id);
+    @Transactional
     void addRole(Role role);
+
+    Role findById(Integer id);
 }

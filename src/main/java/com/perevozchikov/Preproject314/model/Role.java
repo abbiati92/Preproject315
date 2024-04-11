@@ -1,68 +1,67 @@
 package com.perevozchikov.Preproject314.model;
 
-import org.springframework.security.core.GrantedAuthority;
+
+import lombok.Getter;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
+@Getter
 @Entity
 @Table(name = "roles")
-public class Role implements GrantedAuthority {
-
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-    @Column(name = "role")
-    private String role;
+    private Integer id;
+    @Column(name = "name_role")
+    private String name;
+    @Transient
     @ManyToMany(mappedBy = "roles")
-    private List<User> users;
-
-    public Role(String role) {
-        this.role = role;
-    }
+    private Set<User> users;
 
     public Role() {
     }
 
-    public Role(int i, String role_admin) {
+    public Role(Integer id, Set<User> users) {
+        this.id = id;
+        this.users = users;
     }
 
-    public Long getId() {
-        return id;
+
+    public Role(Integer id, String name, Set<User> users) {
+        this.id = id;
+        this.name = name;
+        this.users = users;
     }
 
-    public void setId(Long id) {
+    public String setName(String name) {
+        return this.name = name;
+    }
+
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getRole() {
-        return role;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Role role = (Role) o;
+
+        if (!id.equals(role.id)) return false;
+        if (!name.equals(role.name)) return false;
+        return users.equals(role.users);
     }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 
     @Override
     public String toString() {
-        return role;
-    }
-
-    @Override
-    public String getAuthority() {
-        return getRole();
-    }
-
-    public String getShortName() {
-        return role.replace("ROLE_", "");
+        return name;
     }
 }

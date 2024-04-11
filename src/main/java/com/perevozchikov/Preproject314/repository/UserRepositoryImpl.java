@@ -1,12 +1,14 @@
 package com.perevozchikov.Preproject314.repository;
 
 import com.perevozchikov.Preproject314.model.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -14,43 +16,46 @@ public class UserRepositoryImpl implements UserRepository {
     private EntityManager entityManager;
 
     @PersistenceContext
-    public void setEntityManager (EntityManager entityManager) {
+    public void setEntityManager(EntityManager entityManager) {
+
         this.entityManager = entityManager;
     }
 
     @Override
-    public List<User> getUsersList() {
-        return entityManager.createQuery("SELECT u FROM User u",User.class).getResultList();
+    public Set<User> getUsers() {
+        return entityManager.createQuery("from User", User.class).getResultStream().collect(Collectors.toSet());
     }
 
-    @Override
-    public User getUser(Long id) {
+    @Transactional
+    public User getUser(Integer id) {
+
         return entityManager.find(User.class, id);
     }
 
     @Override
+    @Transactional
     public void addUser(User user) {
         entityManager.persist(user);
     }
 
     @Override
-    public void deleteUser(Long id) {
-        User user = entityManager.find(User.class,id);
-        entityManager.remove(user);
-    }
-
-    @Override
-    public void editUser(User user) {
+    @Transactional
+    public void updateUser(User user) {
         entityManager.merge(user);
     }
 
     @Override
-    public User findByUsername(String username) {
-        Query findByUsernameQuery = entityManager.createQuery
-                ("select u from User u left join fetch u.roles where u.userName=:username", User.class);
-        findByUsernameQuery.setParameter("username", username);
-        return (User) findByUsernameQuery.getSingleResult();
+    @Transactional
+    public void removeUser(Integer id) {
+        entityManager.remove(getUser(id));
     }
 
+    public User findByUserEmail(String email) {
+        String query = "select distinct u from User AS u left join fetch u.roles where u.email=:email";
+        User user = entityManager.createQuery(query, User.class).setParameter("email", email).getSingleResult();
+        if (user == null) {
+            throw new UsernameNotFoundException("User" + email + "not found");
+        }
+        return user;
+    }
 }
-

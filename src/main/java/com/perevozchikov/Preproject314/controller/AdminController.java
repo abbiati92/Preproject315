@@ -4,14 +4,18 @@ import com.perevozchikov.Preproject314.model.User;
 import com.perevozchikov.Preproject314.service.RoleService;
 import com.perevozchikov.Preproject314.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Controller
-@RequestMapping("/admin/users")
+@RequestMapping("/admin")
 public class AdminController {
     private final UserService userService;
     private final RoleService roleService;
@@ -22,34 +26,34 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-    @GetMapping()
-    public String getUsers(Model model) {
-        UserDetails userDetails =
-                (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userService.findByUsername(userDetails.getUsername());
-        model.addAttribute("newUser", new User());
-        model.addAttribute("allRoles", roleService.getAllRoles());
-        model.addAttribute("thisUser", user);
-        model.addAttribute("users", userService.getUsersList());
-        model.addAttribute("flag", user.getUserRolesForUI().contains("ADMIN"));
-        return "bootstrap";
+    @GetMapping(value = "/")
+    public String getUsers(ModelMap model, Principal principal) {
+        User user = userService.findByUserEmail(principal.getName());
+        model.addAttribute("user", user);
+        Set<User> list = userService.getUsers();
+        model.addAttribute("list", list);
+        model.addAttribute("roles", roleService.getRoles());
+        return "users";
     }
 
-    @PostMapping("/edit")
-    public String editUser(@ModelAttribute("user") User user, @RequestParam("checkRoles") String[] selectResult) {
-        userService.editUser(user, selectResult);
-        return "redirect:/admin/users";
+
+    @PostMapping("/")
+    public String addUser(@ModelAttribute("user") @Valid User user, @RequestParam(name = "name_role", required = false) Integer[] roles) {
+        user.setRoles(Arrays.stream(roles).map(roleService::findById).collect(Collectors.toSet()));
+        userService.addUser(user);
+        return "redirect:/admin/";
     }
 
-    @PostMapping("/add")
-    public String addUser(@ModelAttribute("User") User user, @RequestParam("checkRoles") String[] selectResult) {
-        userService.addUser(user, selectResult);
-        return "redirect:/admin/users";
+    @PatchMapping("/{id}")
+    public String saveUpdateUser(@ModelAttribute("user") @Valid User user, @RequestParam(name = "name_role", required = false) Integer[] roles ) {
+        user.setRoles(Arrays.stream(roles).map(roleService::findById).collect(Collectors.toSet()));
+        userService.updateUser(user);
+        return "redirect:/admin/";
     }
 
-    @PostMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return "redirect:/admin/users";
+    @DeleteMapping("/{id}")
+    public String removeUser(@PathVariable("id") Integer id) {
+        userService.removeUser(id);
+        return "redirect:/admin/";
     }
 }
