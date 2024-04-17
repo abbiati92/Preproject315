@@ -40,8 +40,8 @@ public class Init implements ApplicationListener<ContextRefreshedEvent> {
         Set<Role> adminRoles = new HashSet<>(List.of(adminRole));
 
         User admin = new User();
-        admin.setName("admin");
-        admin.setLastname("Vasiliev");
+        admin.setUsername("admin");
+        admin.setLastname("adminov");
         admin.setAge(30);
         admin.setEmail("admin@mail.ru");
         admin.setPassword("admin");
@@ -49,8 +49,8 @@ public class Init implements ApplicationListener<ContextRefreshedEvent> {
         userService.addUser(admin);
 
         User user = new User();
-        user.setName("user");
-        user.setLastname("user2");
+        user.setUsername("user");
+        user.setLastname("userov");
         user.setAge(18);
         user.setEmail("user@mail.ru");
         user.setPassword("user");
