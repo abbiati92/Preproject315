@@ -18,8 +18,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "name")
-    private String name;
+    @Column(name = "username")
+    private String username;
     @Column(name = "lastname")
     private String lastname;
     @Column(name = "age")
@@ -29,26 +29,67 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Getter
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
     @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;
 
     public User() {
     }
 
-    public User(String name, String lastname, int age, String email) {
-        this.name = name;
+    public User(String username, String lastname, Integer age, String email, String password, Set<Role> roles) {
+        this.username = username;
         this.lastname = lastname;
         this.age = age;
         this.email = email;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public String getUsername() {
-        return name;
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
@@ -60,7 +101,7 @@ public class User {
 
         if (id != user.id) return false;
         if (age != user.age) return false;
-        if (!name.equals(user.name)) return false;
+        if (!username.equals(user.username)) return false;
         if (!lastname.equals(user.lastname)) return false;
         if (!email.equals(user.email)) return false;
         if (!password.equals(user.password)) return false;
@@ -75,5 +116,13 @@ public class User {
     @Override
     public String toString() {
         return roles.toString();
+    }
+
+
+    protected String getName() {
+        return username;
+    }
+
+    public void setName(String admin) {
     }
 }
